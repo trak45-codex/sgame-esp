@@ -58,16 +58,24 @@ public class OverlayService extends Service {
                 // window and swallows the whole touch stream.
                 | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
 
+        // ---- Small, self-contained window instead of a full-screen one ----
+        // A fullscreen overlay is what wedges the touch stream on OEM ROMs:
+        // even with FLAG_NOT_TOUCHABLE the window's input region can end up
+        // owning the whole display. Keeping the window to the exact rectangle
+        // we actually draw into removes that failure mode entirely.
+        final int winDp = (int) (OverlayView.MAP_SIZE_DP + OverlayView.MAP_MARGIN_DP * 2);  // 272dp
+        final int winPx = (int) (winDp * getResources().getDisplayMetrics().density);
+
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-            WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.MATCH_PARENT,
+            winPx,
+            winPx,
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
                 : WindowManager.LayoutParams.TYPE_PHONE,
             flags,
             PixelFormat.TRANSLUCENT
         );
-        lp.gravity = Gravity.TOP | Gravity.START;
+        lp.gravity = Gravity.TOP | Gravity.END;   // top-right corner
         lp.setTitle("sgame_esp_overlay");
         // Keep the window out of the touchable region entirely.
         lp.alpha = 1.0f;

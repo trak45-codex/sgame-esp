@@ -16,9 +16,10 @@ public class OverlayView extends View {
     private final Paint hpBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint hpFgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    // Minimap area in top-right corner
-    private static final float MAP_SIZE_DP = 240;
-    private static final float MAP_MARGIN_DP = 16;
+    // Minimap panel geometry (dp). The overlay window is sized to exactly
+    // fit this panel + margins, so the window never covers the whole screen.
+    public static final float MAP_SIZE_DP = 240;
+    public static final float MAP_MARGIN_DP = 16;
     // sgame map world coordinate range (verified): roughly -65..+65 Unity units
     private static final float WORLD_HALF = 65f;
     // HP bar geometry (px, scaled by density at draw time)
@@ -63,10 +64,13 @@ public class OverlayView extends View {
     protected void onDraw(Canvas c) {
         super.onDraw(c);
         float density = getResources().getDisplayMetrics().density;
-        float mapSize = MAP_SIZE_DP * density;
         float margin = MAP_MARGIN_DP * density;
-        float left = getWidth() - mapSize - margin;
-        float top = margin + 100;  // below status bar
+        // The window is exactly big enough for the map panel, so the panel is
+        // anchored to the view's own bounds rather than to the screen.
+        float mapSize = Math.min(getWidth(), getHeight()) - margin * 2;
+        if (mapSize <= 0) return;
+        float left = margin;
+        float top = margin;
         float cx = left + mapSize / 2;
         float cy = top + mapSize / 2;
 
@@ -134,7 +138,7 @@ public class OverlayView extends View {
         }
 
         c.drawText("enemy=" + enemyCount + "  /" + actors.length,
-                   left + 8, top + 30, textPaint);
+                   left + 8, top + 22, textPaint);
 
         // Periodic log dump for debugging.
         dumpCounter++;
