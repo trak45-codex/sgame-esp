@@ -16,10 +16,9 @@ public class OverlayView extends View {
     private final Paint hpBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint hpFgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    // Minimap panel geometry (dp). The overlay window is sized to exactly
-    // fit this panel + margins, so the window never covers the whole screen.
-    public static final float MAP_SIZE_DP = 240;
-    public static final float MAP_MARGIN_DP = 16;
+    // Minimap area in top-right corner
+    private static final float MAP_SIZE_DP = 240;
+    private static final float MAP_MARGIN_DP = 16;
     // sgame map world coordinate range (verified): roughly -65..+65 Unity units
     private static final float WORLD_HALF = 65f;
     // HP bar geometry (px, scaled by density at draw time)
@@ -28,13 +27,6 @@ public class OverlayView extends View {
 
     public OverlayView(Context ctx) {
         super(ctx);
-        // Absolutely never consume touch: let every event reach the app below.
-        setFocusable(false);
-        setFocusableInTouchMode(false);
-        setClickable(false);
-        setLongClickable(false);
-        setEnabled(false);
-        setWillNotDraw(false);
         dotPaint.setStyle(Paint.Style.FILL);
         textPaint.setColor(Color.WHITE);
         textPaint.setTextSize(28);
@@ -43,16 +35,6 @@ public class OverlayView extends View {
         axisPaint.setStrokeWidth(1.5f);
         hpBgPaint.setColor(Color.argb(200, 40, 40, 40));
         hpFgPaint.setColor(Color.argb(255, 80, 255, 80));
-    }
-
-    @Override
-    public boolean onTouchEvent(android.view.MotionEvent e) {
-        return false;   // never consume
-    }
-
-    @Override
-    public boolean onGenericMotionEvent(android.view.MotionEvent e) {
-        return false;   // never consume (hover/stylus/mouse)
     }
 
     public void setActors(OverlayService.Actor[] a) {
@@ -64,13 +46,10 @@ public class OverlayView extends View {
     protected void onDraw(Canvas c) {
         super.onDraw(c);
         float density = getResources().getDisplayMetrics().density;
+        float mapSize = MAP_SIZE_DP * density;
         float margin = MAP_MARGIN_DP * density;
-        // The window is exactly big enough for the map panel, so the panel is
-        // anchored to the view's own bounds rather than to the screen.
-        float mapSize = Math.min(getWidth(), getHeight()) - margin * 2;
-        if (mapSize <= 0) return;
-        float left = margin;
-        float top = margin;
+        float left = getWidth() - mapSize - margin;
+        float top = margin + 100;  // below status bar
         float cx = left + mapSize / 2;
         float cy = top + mapSize / 2;
 
@@ -138,7 +117,7 @@ public class OverlayView extends View {
         }
 
         c.drawText("enemy=" + enemyCount + "  /" + actors.length,
-                   left + 8, top + 22, textPaint);
+                   left + 8, top + 30, textPaint);
 
         // Periodic log dump for debugging.
         dumpCounter++;

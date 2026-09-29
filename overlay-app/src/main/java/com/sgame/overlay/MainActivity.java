@@ -6,13 +6,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
-    private TextView tv;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,8 +20,8 @@ public class MainActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(50, 100, 50, 50);
 
-        tv = new TextView(this);
-        tv.setText("sgame ESP Overlay\n\n1. 授权悬浮窗权限\n2. 启动 Overlay\n3. 启动 sgame 进对战\n\n需要 Zygisk 模块已装且生效。");
+        TextView tv = new TextView(this);
+        tv.setText("sgame ESP Overlay\n\n1. 授权悬浮窗权限\n2. 启动 Overlay\n3. 启动 sgame 进对战");
         tv.setTextSize(18);
         root.addView(tv);
 
@@ -34,8 +33,6 @@ public class MainActivity extends Activity {
                 Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:" + getPackageName()));
                 startActivity(i);
-            } else {
-                tv.setText("已有悬浮窗权限");
             }
         });
         root.addView(btnPerm);
@@ -49,7 +46,7 @@ public class MainActivity extends Activity {
                 return;
             }
             startForegroundService(new Intent(this, OverlayService.class));
-            tv.setText("已启动 Overlay\n等待 sgame 模块连接 127.0.0.1:47291 ...");
+            tv.setText("已启动 Overlay\n等待 sgame 连接...");
         });
         root.addView(btnStart);
 
