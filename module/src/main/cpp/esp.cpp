@@ -317,8 +317,8 @@ static bool actor_enum_init() {
 
     g_enum.am_klass = am;
     g_enum.am_sinst = si;
-    LOGI("[esp] ActorManager.s_instance @ +0x%x (static)",
-         il2cpp_field_get_offset(si));
+    LOGI("[esp] ActorManager.s_instance @ +0x%zx (static)",
+         (size_t) il2cpp_field_get_offset(si));
     return true;
 }
 
@@ -351,7 +351,7 @@ static int scan_heroes(std::vector<EspActor> &out) {
         // Field offsets from IL2CPP already include the object header; upstream
         // observed raw==0x8 needing +0x10 for the managed pointer to land.
         g_enum.dv_ctx_off = (raw >= 0x10) ? raw : (raw + 0x10);
-        LOGI("[esp] DictionaryView.Context @ +0x%x", g_enum.dv_ctx_off);
+        LOGI("[esp] DictionaryView.Context @ +0x%x", (unsigned) g_enum.dv_ctx_off);
     }
 
     void *dict = fptr(dv, g_enum.dv_ctx_off);
