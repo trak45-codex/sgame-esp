@@ -1,0 +1,6 @@
+include ':module'
+include ':overlay-app'
+
+import org.apache.tools.ant.DirectoryScanner
+
+DirectoryScanner.removeDefaultExclude('**/.gitattributes')

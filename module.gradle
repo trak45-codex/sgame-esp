@@ -1,0 +1,9 @@
+ext {
+    moduleLibraryName = "sgesp"
+    magiskModuleId = "sgame_esp_zygisk"
+    moduleName = "SGame ESP Zygisk"
+    moduleAuthor = "RE research"
+    moduleDescription = "SGame ESP overlay (zygisk)."
+    moduleVersion = "v1.0.0"
+    moduleVersionCode = 1
+}
