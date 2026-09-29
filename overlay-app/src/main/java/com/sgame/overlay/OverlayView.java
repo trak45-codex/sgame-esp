@@ -27,6 +27,13 @@ public class OverlayView extends View {
 
     public OverlayView(Context ctx) {
         super(ctx);
+        // Absolutely never consume touch: let every event reach the app below.
+        setFocusable(false);
+        setFocusableInTouchMode(false);
+        setClickable(false);
+        setLongClickable(false);
+        setEnabled(false);
+        setWillNotDraw(false);
         dotPaint.setStyle(Paint.Style.FILL);
         textPaint.setColor(Color.WHITE);
         textPaint.setTextSize(28);
@@ -35,6 +42,16 @@ public class OverlayView extends View {
         axisPaint.setStrokeWidth(1.5f);
         hpBgPaint.setColor(Color.argb(200, 40, 40, 40));
         hpFgPaint.setColor(Color.argb(255, 80, 255, 80));
+    }
+
+    @Override
+    public boolean onTouchEvent(android.view.MotionEvent e) {
+        return false;   // never consume
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(android.view.MotionEvent e) {
+        return false;   // never consume (hover/stylus/mouse)
     }
 
     public void setActors(OverlayService.Actor[] a) {
